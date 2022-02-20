@@ -1,4 +1,4 @@
-package main
+package golog
 
 const (
 	ERROR = "ERROR"
