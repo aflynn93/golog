@@ -32,7 +32,7 @@ func (e ErrorLogger) LogError(errorType string, err error) {
 
 	if err, ok := err.(stackTracer); ok {
 		for _, f := range err.StackTrace() {
-			str := fmt.Sprintf("%+s", f)
+			str := fmt.Sprintf("%+s:%d", f, f)
 
 			// Don't include golog or runtime frame in the stack trace
 			if strings.Contains(str, "golog") || strings.Contains(str, "runtime") {
