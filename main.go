@@ -28,7 +28,9 @@ func (e ErrorLogger) CreateError(message ...interface{}) error {
 // LogError() - Log error, regardless of logging level. Include stack trace. Provide the error type - ERROR or FATAL.
 // ERROR will allow app to continue, FATAL will cause app to shut down.
 func (e ErrorLogger) LogError(errorType string, err error) {
-	var finalError string = err.Error() + "\n"
+	// Add a new line before the error text so that the timestamp will be on its own line
+	// Then add the error text followed my a new line
+	var finalError string = "\n" + err.Error() + "\n"
 
 	if err, ok := err.(stackTracer); ok {
 		for _, f := range err.StackTrace() {
@@ -53,6 +55,6 @@ func (e ErrorLogger) LogError(errorType string, err error) {
 	} else if errorType == FATAL {
 		log.Fatal(finalError)
 	} else {
-		log.Printf("%s%s\n", "Invalid errorType:", errorType)
+		log.Printf("Invalid errorType: [%s]\n", errorType)
 	}
 }
