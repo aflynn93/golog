@@ -14,25 +14,25 @@ type stackTracer interface {
 
 // LogMessage() - Takes a log level, which is then compared to the configured log level. If the level provided
 // is lower than or equal to the configured log level, the message is logged.
-func LogMessage(messageLogLevel int, message ...interface{}) {
-	if messageLogLevel <= logLevel {
+func (g GoLogger) LogMessage(messageLogLevel int, message ...interface{}) {
+	if messageLogLevel <= g.LogLevel {
 		fmt.Println(message...)
 	}
 }
 
 // CreateError() - Returns an error with a stack trace
-func CreateError(message ...interface{}) error {
+func (e ErrorLogger) CreateError(message ...interface{}) error {
 	return errors.New(fmt.Sprint(message...))
 }
 
 // LogError() - Log error, regardless of logging level. Include stack trace. Provide the error type - ERROR or FATAL.
 // ERROR will allow app to continue, FATAL will cause app to shut down.
-func LogError(errorType string, err error) {
+func (e ErrorLogger) LogError(errorType string, err error) {
 	var finalError string = err.Error() + "\n"
 
 	if err, ok := err.(stackTracer); ok {
 		for _, f := range err.StackTrace() {
-			str := fmt.Sprintf("%+s:%d", f, f)
+			str := fmt.Sprintf("%+s", f)
 
 			// Don't include golog or runtime frame in the stack trace
 			if strings.Contains(str, "golog") || strings.Contains(str, "runtime") {
@@ -55,9 +55,4 @@ func LogError(errorType string, err error) {
 	} else {
 		log.Printf("%s%s\n", "Invalid errorType:", errorType)
 	}
-}
-
-// InitLogger() - Get a logger for logging messages
-func InitLogger(configuredLogLevel int) {
-	logLevel = configuredLogLevel
 }
